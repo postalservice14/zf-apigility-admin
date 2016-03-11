@@ -50,13 +50,8 @@ class AbstractPluginManagerModel
             return $this->plugins;
         }
 
-        // Add invokableClasses via reflection
-        $reflClass = new \ReflectionClass($this->pluginManager);
-        $reflProp  = $reflClass->getProperty('invokableClasses');
-        $reflProp->setAccessible(true);
-
-        $invokables = array_flip($reflProp->getValue($this->pluginManager));
-        $plugins    = array_merge($invokables, $this->pluginManager->getCanonicalNames());
+        $factories = array_flip($this->pluginManager->getRegisteredServices()['factories']);
+        $plugins    = array_merge($factories, $this->pluginManager->getCanonicalNames());
 
         foreach ($plugins as $name => $canonical) {
             $this->plugins[] = $name;
